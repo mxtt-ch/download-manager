@@ -1,20 +1,75 @@
-/**
- * MainPage - 主页面骨架
- *
- * 当前为占位版本，后续 Task 8-12 将逐步替换为完整的 Sidebar、
- * Toolbar、TaskTable、DetailPanel、GlobalStats 等组件。
- */
+import { useState } from "react";
+import { Sidebar } from "@/components/Sidebar";
 
+/**
+ * 主页面布局
+ *
+ * 左侧 220px 侧边栏 + 右侧主内容区。
+ * 主内容区自上而下为：工具栏、任务列表、详情面板、全局状态栏。
+ *
+ * 当前 Toolbar / TaskTable / DetailPanel / GlobalStats 尚未实现，
+ * 使用占位区域替代，待后续 Task 逐步替换。
+ */
 export function MainPage() {
+  const [showSettings, setShowSettings] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<string>("download");
+
+  /** 打开设置弹窗并定位到指定 tab */
+  const handleOpenSettings = (tab?: string) => {
+    setSettingsTab(tab || "download");
+    setShowSettings(true);
+  };
+
   return (
     <div className="flex h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
-      <div className="w-56 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
-        {/* 侧边栏占位 — 将在 Task 8 中替换 */}
-        <div className="p-4 text-sm text-slate-400">侧边栏加载中...</div>
+      {/* 侧边栏 */}
+      <Sidebar onOpenSettings={handleOpenSettings} />
+
+      {/* 主内容区 */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* 工具栏占位 — 将在 Task 9 中替换为 <Toolbar> */}
+        <div className="h-12 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 shrink-0">
+          <span className="text-sm text-slate-400">工具栏</span>
+        </div>
+
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* 任务列表占位 — 将在 Task 10 中替换为 <TaskTable> */}
+          <div className="flex-1 overflow-auto p-4">
+            <div className="flex items-center justify-center h-full">
+              <p className="text-slate-400 text-sm">任务列表加载中...</p>
+            </div>
+          </div>
+
+          {/* 详情面板占位 — 将在 Task 11 中替换为 <DetailPanel> */}
+          <div className="h-40 border-t border-slate-200 dark:border-slate-800 p-4 shrink-0">
+            <p className="text-slate-400 text-sm">详情面板</p>
+          </div>
+        </div>
+
+        {/* 全局状态栏占位 — 将在 Task 12 中替换为 <GlobalStats> */}
+        <div className="h-8 border-t border-slate-200 dark:border-slate-800 flex items-center px-4 shrink-0">
+          <span className="text-xs text-slate-400">全局状态栏</span>
+        </div>
       </div>
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-lg text-slate-400">下载管理器 — 主页面</p>
-      </div>
+
+      {/* 设置弹窗占位 — 将在后续 Task 中实现 */}
+      {showSettings && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-xl p-6 min-w-[400px]">
+            <h2 className="text-lg font-semibold mb-4">
+              设置 — {settingsTab}
+            </h2>
+            <p className="text-sm text-slate-400 mb-4">设置面板将在后续实现</p>
+            <button
+              type="button"
+              onClick={() => setShowSettings(false)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+            >
+              关闭
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
