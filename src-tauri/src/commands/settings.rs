@@ -1,45 +1,53 @@
 use tauri::State;
 use crate::config::AppState;
-use crate::models::AppConfig;
+use crate::db::DbState;
+use crate::db::categories;
+use crate::models::settings::AppConfig;
+use crate::models::category::Category;
 
+/// 获取应用配置
 #[tauri::command]
-pub fn get_settings(_state: State<'_, AppState>) -> Result<AppConfig, String> {
-    // 将在后续任务中完整实现
-    let config = _state.config.lock().map_err(|e| e.to_string())?;
-    Ok(config.clone())
+pub fn get_settings(config: State<'_, AppState>) -> Result<AppConfig, String> {
+    let cfg = config.config.lock().map_err(|e| e.to_string())?;
+    Ok(cfg.clone())
 }
 
+/// 更新应用配置
 #[tauri::command]
-pub fn update_settings(_state: State<'_, AppState>, _config: AppConfig) -> Result<(), String> {
-    // 将在后续任务中完整实现
-    Err("暂未实现".into())
+pub fn update_settings(
+    config: State<'_, AppState>,
+    section: AppConfig,
+) -> Result<AppConfig, String> {
+    let mut cfg = config.config.lock().map_err(|e| e.to_string())?;
+    *cfg = section;
+
+    // 持久化到文件
+    let app_dir = config.app_dir.lock().map_err(|e| e.to_string())?;
+    let path = app_dir.join("config.json");
+    let content = serde_json::to_string_pretty(&*cfg).map_err(|e| e.to_string())?;
+    std::fs::write(&path, content).map_err(|e| e.to_string())?;
+
+    Ok(cfg.clone())
 }
 
-/// 分类条目（占位定义，后续移至 models）
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct Category {
-    pub id: String,
-    pub name: String,
-    pub extensions: Vec<String>,
-    pub save_path: Option<String>,
-    pub label: Option<String>,
-    pub icon: Option<String>,
+/// 获取所有分类
+#[tauri::command]
+pub fn get_categories(db: State<'_, DbState>) -> Result<Vec<Category>, String> {
+    let conn = db.conn.lock().map_err(|e| e.to_string())?;
+    Ok(categories::get_all(&conn))
 }
 
+/// 插入或更新分类
 #[tauri::command]
-pub fn get_categories(_state: State<'_, AppState>) -> Result<Vec<Category>, String> {
-    // 将在后续任务中完整实现
-    Ok(vec![])
+pub fn upsert_category(db: State<'_, DbState>, cat: Category) -> Result<Category, String> {
+    let conn = db.conn.lock().map_err(|e| e.to_string())?;
+    categories::upsert(&conn, &cat).map_err(|e| e.to_string())?;
+    Ok(cat)
 }
 
+/// 删除分类
 #[tauri::command]
-pub fn upsert_category(_state: State<'_, AppState>, _category: Category) -> Result<(), String> {
-    // 将在后续任务中完整实现
-    Err("暂未实现".into())
-}
-
-#[tauri::command]
-pub fn delete_category(_state: State<'_, AppState>, _category_id: String) -> Result<(), String> {
-    // 将在后续任务中完整实现
-    Err("暂未实现".into())
+pub fn delete_category(db: State<'_, DbState>, id: String) -> Result<(), String> {
+    let conn = db.conn.lock().map_err(|e| e.to_string())?;
+    categories::delete(&conn, &id).map_err(|e| e.to_string())
 }
