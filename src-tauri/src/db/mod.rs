@@ -67,7 +67,8 @@ fn run_migrations(conn: &Connection) -> Result<(), rusqlite::Error> {
             chunk_index INTEGER NOT NULL,
             start_byte INTEGER NOT NULL,
             end_byte INTEGER NOT NULL,
-            downloaded_offset INTEGER NOT NULL DEFAULT 0
+            downloaded_offset INTEGER NOT NULL DEFAULT 0,
+            UNIQUE(task_id, chunk_index)
         );
 
         CREATE TABLE IF NOT EXISTS site_auth (

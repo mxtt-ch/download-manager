@@ -34,6 +34,7 @@ pub fn create_task(
         supports_ranges: None,
         expected_hash: None,
         error_code: None,
+        speed: None,
         created_at: Utc::now().timestamp_millis(),
         started_at: None,
         completed_at: None,

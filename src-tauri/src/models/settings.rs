@@ -73,3 +73,15 @@ impl Default for SpeedSettings {
         }
     }
 }
+
+/// 速度策略 — 数据库持久化存储
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SpeedPolicy {
+    pub id: String,
+    pub name: String,
+    pub download_limit: Option<u64>,
+    pub upload_limit: Option<u64>,
+    pub mode: String,
+    pub schedule: Option<String>,
+    pub is_active: bool,
+}

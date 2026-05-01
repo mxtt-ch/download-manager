@@ -42,6 +42,7 @@ pub struct DownloadTask {
     pub supports_ranges: Option<bool>,
     pub expected_hash: Option<String>,
     pub error_code: Option<String>,
+    pub speed: Option<u64>,
     pub created_at: i64,
     pub started_at: Option<i64>,
     pub completed_at: Option<i64>,

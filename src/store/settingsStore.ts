@@ -50,7 +50,7 @@ interface SettingsStore {
 }
 
 /** 应用配置与分类管理 Store */
-export const useSettingsStore = create<SettingsStore>((set) => ({
+export const useSettingsStore = create<SettingsStore>((set, get) => ({
   config: DEFAULT_CONFIG,
   categories: [],
   isLoading: false,
@@ -67,7 +67,9 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   },
 
   updateSettings: async (section) => {
-    const config = await settingsApi.updateSettings(section);
+    // 在前端合并部分更新为完整配置，匹配后端全量覆盖逻辑
+    const merged = { ...get().config, ...section };
+    const config = await settingsApi.updateSettings(merged);
     set({ config });
   },
 
