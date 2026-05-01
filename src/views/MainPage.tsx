@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Toolbar } from "@/components/Toolbar";
+import { TaskTable } from "@/components/TaskTable";
 
 /**
  * 主页面布局
@@ -33,12 +34,8 @@ export function MainPage() {
         <Toolbar onNewDownload={() => setShowNewDownload(true)} onOpenSettings={() => handleOpenSettings()} />
 
         <div className="flex-1 flex flex-col min-h-0">
-          {/* 任务列表占位 — 将在 Task 10 中替换为 <TaskTable> */}
-          <div className="flex-1 overflow-auto p-4">
-            <div className="flex items-center justify-center h-full">
-              <p className="text-slate-400 text-sm">任务列表加载中...</p>
-            </div>
-          </div>
+          {/* 任务列表表格 */}
+          <TaskTable />
 
           {/* 详情面板占位 — 将在 Task 11 中替换为 <DetailPanel> */}
           <div className="h-40 border-t border-slate-200 dark:border-slate-800 p-4 shrink-0">

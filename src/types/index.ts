@@ -20,6 +20,7 @@ export interface DownloadTask {
   threadCount: number;
   totalSize: number;
   downloadedSize: number;
+  speed?: number;
   supportsRanges?: boolean;
   expectedHash?: string;
   errorCode?: string;
@@ -160,6 +161,13 @@ export interface SystemStats {
   memoryUsage: number;
   networkDownSpeed: number;
   networkUpSpeed: number;
+}
+
+// 下载进度事件 — 后端向前端推送的实时进度事件
+export interface DownloadProgressEvent {
+  taskId: string;
+  chunkIndex: number;
+  offset: number;
 }
 
 // 速度历史数据点

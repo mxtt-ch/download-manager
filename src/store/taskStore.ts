@@ -29,6 +29,9 @@ interface TaskStore {
   resumeTask: (id: string) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   retryTask: (id: string) => Promise<void>;
+
+  /** 更新任务下载进度（由 useDownloadProgress Hook 调用） */
+  updateTaskProgress: (taskId: string, chunkIndex: number, offset: number) => void;
 }
 
 /** 任务状态管理 — 所有任务相关操作的核心 Store */
@@ -130,6 +133,17 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const task = await taskApi.retryTask(id);
     set((s) => ({
       tasks: s.tasks.map((t) => (t.id === id ? task : t)),
+    }));
+  },
+
+  /** 更新任务下载进度（由 useDownloadProgress Hook 调用） */
+  updateTaskProgress: (taskId: string, _chunkIndex: number, offset: number) => {
+    set((s) => ({
+      tasks: s.tasks.map((t) =>
+        t.id === taskId
+          ? { ...t, downloadedSize: Math.max(t.downloadedSize, offset) }
+          : t,
+      ),
     }));
   },
 }));
