@@ -1,0 +1,34 @@
+[
+  {
+    "id": "site-baidu",
+    "siteName": "百度网盘",
+    "domainPattern": "*.baidu.com",
+    "cookies": "BDUSS=xxx-mock-cookie-baidu; STOKEN=xxx",
+    "customUa": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "referer": "https://pan.baidu.com/",
+    "quotaTotal": 214748364800,
+    "quotaUsed": 98784247808,
+    "loginStatus": "logged_in"
+  },
+  {
+    "id": "site-github",
+    "siteName": "GitHub",
+    "domainPattern": "*.github.com",
+    "cookies": "gh_token=mock-github-token-xxxxx",
+    "customUa": "",
+    "referer": "",
+    "quotaUsed": 0,
+    "loginStatus": "logged_in"
+  },
+  {
+    "id": "site-aliyun",
+    "siteName": "阿里云盘",
+    "domainPattern": "*.aliyundrive.com",
+    "cookies": "",
+    "customUa": "",
+    "referer": "",
+    "quotaTotal": 1099511627776,
+    "quotaUsed": 0,
+    "loginStatus": "expired"
+  }
+]
