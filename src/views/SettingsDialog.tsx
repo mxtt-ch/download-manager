@@ -16,6 +16,9 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { DownloadSettings } from "@/views/settings/DownloadSettings";
+import { SpeedSettings } from "@/views/settings/SpeedSettings";
+import { TaskManagementSettings } from "@/views/settings/TaskManagementSettings";
+import { SiteManagementSettings } from "@/views/settings/SiteManagementSettings";
 import { PlaceholderSettings } from "@/views/settings/PlaceholderSettings";
 
 // ============================================================
@@ -96,11 +99,11 @@ export function SettingsDialog({
       case "download":
         return <DownloadSettings />;
       case "speed":
-        return <PlaceholderSettings title={getNavLabel("speed")} />;
+        return <SpeedSettings />;
       case "task-management":
-        return <PlaceholderSettings title={getNavLabel("task-management")} />;
+        return <TaskManagementSettings />;
       case "site":
-        return <PlaceholderSettings title={getNavLabel("site")} />;
+        return <SiteManagementSettings />;
       default:
         return <PlaceholderSettings title={getNavLabel(activeTab)} />;
     }
