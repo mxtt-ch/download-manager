@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { Toolbar } from "@/components/Toolbar";
 import { TaskTable } from "@/components/TaskTable";
 import { DetailPanel } from "@/components/DetailPanel";
+import { GlobalStats } from "@/components/GlobalStats";
 
 /**
  * 主页面布局
@@ -29,8 +30,8 @@ export function MainPage() {
       {/* 侧边栏 */}
       <Sidebar onOpenSettings={handleOpenSettings} />
 
-      {/* 主内容区 */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* 主内容区 — relative 定位以支持 GlobalStats 的 absolute 定位 */}
+      <div className="flex-1 flex flex-col min-w-0 relative">
         {/* 顶部工具栏 */}
         <Toolbar onNewDownload={() => setShowNewDownload(true)} onOpenSettings={() => handleOpenSettings()} />
 
@@ -42,10 +43,8 @@ export function MainPage() {
           <DetailPanel />
         </div>
 
-        {/* 全局状态栏占位 — 将在 Task 12 中替换为 <GlobalStats> */}
-        <div className="h-8 border-t border-slate-200 dark:border-slate-800 flex items-center px-4 shrink-0">
-          <span className="text-xs text-slate-400">全局状态栏</span>
-        </div>
+        {/* 全局统计区 — 右下角悬浮小组件（速率图 + 磁盘空间） */}
+        <GlobalStats />
       </div>
 
       {/* 新建下载弹窗占位 — 将在后续 Task 中实现 */}
