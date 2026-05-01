@@ -5,6 +5,7 @@ import { TaskTable } from "@/components/TaskTable";
 import { DetailPanel } from "@/components/DetailPanel";
 import { GlobalStats } from "@/components/GlobalStats";
 import { NewDownloadDialog } from "@/views/NewDownloadDialog";
+import { SettingsDialog } from "@/views/SettingsDialog";
 
 /**
  * 主页面布局
@@ -56,23 +57,13 @@ export function MainPage() {
         />
       )}
 
-      {/* 设置弹窗占位 — 将在后续 Task 中实现 */}
+      {/* 设置弹窗 */}
       {showSettings && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-xl p-6 min-w-[400px]">
-            <h2 className="text-lg font-semibold mb-4">
-              设置 — {settingsTab}
-            </h2>
-            <p className="text-sm text-slate-400 mb-4">设置面板将在后续实现</p>
-            <button
-              type="button"
-              onClick={() => setShowSettings(false)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-            >
-              关闭
-            </button>
-          </div>
-        </div>
+        <SettingsDialog
+          open={showSettings}
+          initialTab={settingsTab}
+          onClose={() => setShowSettings(false)}
+        />
       )}
     </div>
   );
