@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Toolbar } from "@/components/Toolbar";
 import { TaskTable } from "@/components/TaskTable";
+import { DetailPanel } from "@/components/DetailPanel";
 
 /**
  * 主页面布局
@@ -37,10 +38,8 @@ export function MainPage() {
           {/* 任务列表表格 */}
           <TaskTable />
 
-          {/* 详情面板占位 — 将在 Task 11 中替换为 <DetailPanel> */}
-          <div className="h-40 border-t border-slate-200 dark:border-slate-800 p-4 shrink-0">
-            <p className="text-slate-400 text-sm">详情面板</p>
-          </div>
+          {/* 任务详情面板 — 底部滑入，显示任务详情/线程/文件列表/日志 */}
+          <DetailPanel />
         </div>
 
         {/* 全局状态栏占位 — 将在 Task 12 中替换为 <GlobalStats> */}
