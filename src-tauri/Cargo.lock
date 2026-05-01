@@ -819,6 +819,8 @@ name = "download-manager"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "futures-util",
+ "parking_lot",
  "reqwest 0.12.28",
  "rusqlite",
  "serde",
