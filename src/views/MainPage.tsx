@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
+import { Toolbar } from "@/components/Toolbar";
 
 /**
  * 主页面布局
@@ -13,6 +14,7 @@ import { Sidebar } from "@/components/Sidebar";
 export function MainPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [settingsTab, setSettingsTab] = useState<string>("download");
+  const [showNewDownload, setShowNewDownload] = useState(false);
 
   /** 打开设置弹窗并定位到指定 tab */
   const handleOpenSettings = (tab?: string) => {
@@ -27,10 +29,8 @@ export function MainPage() {
 
       {/* 主内容区 */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* 工具栏占位 — 将在 Task 9 中替换为 <Toolbar> */}
-        <div className="h-12 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 shrink-0">
-          <span className="text-sm text-slate-400">工具栏</span>
-        </div>
+        {/* 顶部工具栏 */}
+        <Toolbar onNewDownload={() => setShowNewDownload(true)} onOpenSettings={() => handleOpenSettings()} />
 
         <div className="flex-1 flex flex-col min-h-0">
           {/* 任务列表占位 — 将在 Task 10 中替换为 <TaskTable> */}
@@ -51,6 +51,23 @@ export function MainPage() {
           <span className="text-xs text-slate-400">全局状态栏</span>
         </div>
       </div>
+
+      {/* 新建下载弹窗占位 — 将在后续 Task 中实现 */}
+      {showNewDownload && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-xl p-6 min-w-[400px]">
+            <h2 className="text-lg font-semibold mb-4">新建下载</h2>
+            <p className="text-sm text-slate-400 mb-4">新建下载面板将在后续实现</p>
+            <button
+              type="button"
+              onClick={() => setShowNewDownload(false)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+            >
+              关闭
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 设置弹窗占位 — 将在后续 Task 中实现 */}
       {showSettings && (
