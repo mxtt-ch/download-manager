@@ -8,31 +8,7 @@ import { getQueues } from "@/api/queues";
 import type { Queue } from "@/types";
 import { X, FileText, Cpu, FolderTree, ScrollText } from "lucide-react";
 
-// ============================================================
-// 格式化工具函数
-// ============================================================
-
-/**
- * 将时间戳格式化为中文日期字符串
- * 若无时间戳则返回 "--"
- */
-function formatDate(timestamp?: number): string {
-  if (!timestamp) return "--";
-  return new Date(timestamp).toLocaleString("zh-CN");
-}
-
-/** 将字节数格式化为可读字符串（B/KB/MB/GB/TB） */
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "--";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + " " + units[i];
-}
-
-/** 格式化下载速度（字节/秒） */
-function formatSpeed(bytesPerSec: number): string {
-  return formatBytes(bytesPerSec) + "/s";
-}
+import { formatDate, formatBytes, formatSpeed } from "@/utils/util";
 
 // ============================================================
 // 子组件
@@ -107,7 +83,7 @@ export function DetailPanel() {
     fetchCategories();
     getQueues()
       .then(setQueues)
-      .catch(() => {});
+      .catch(() => { });
   }, [fetchCategories]);
 
   const isOpen = activeTaskId !== null;
@@ -321,9 +297,9 @@ export function DetailPanel() {
                               <span className="text-xs text-slate-400 w-9 text-right shrink-0">
                                 {rangeSize > 0
                                   ? `${Math.round(
-                                      (t.downloadedOffset / rangeSize) *
-                                        100,
-                                    )}%`
+                                    (t.downloadedOffset / rangeSize) *
+                                    100,
+                                  )}%`
                                   : "--"}
                               </span>
                             </div>
@@ -342,11 +318,11 @@ export function DetailPanel() {
                               className={cn(
                                 "inline-flex px-1.5 py-0.5 rounded-full",
                                 isCompleted &&
-                                  "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+                                "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
                                 isDownloading &&
-                                  "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+                                "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
                                 t.status === "idle" &&
-                                  "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
+                                "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
                               )}
                             >
                               {THREAD_STATUS_LABEL[t.status] || t.status}
@@ -403,11 +379,11 @@ export function DetailPanel() {
                         <span
                           className={cn(
                             log.level === "error" &&
-                              "text-red-600 dark:text-red-400",
+                            "text-red-600 dark:text-red-400",
                             log.level === "warn" &&
-                              "text-yellow-600 dark:text-yellow-400",
+                            "text-yellow-600 dark:text-yellow-400",
                             log.level === "info" &&
-                              "text-slate-600 dark:text-slate-400",
+                            "text-slate-600 dark:text-slate-400",
                           )}
                         >
                           {log.message}

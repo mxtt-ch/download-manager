@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { MainPage } from "@/views/MainPage";
+import MainPage from "@/views/index/MainPage";
 import { Toaster } from "@/components/ui/toaster";
 
 function App() {

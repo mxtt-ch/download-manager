@@ -33,12 +33,12 @@ const FILTER_BUTTONS: {
   label: string;
   icon: typeof List;
 }[] = [
-  { filter: "all", label: "全部任务", icon: List },
-  { filter: "Downloading", label: "下载中", icon: Download },
-  { filter: "Paused", label: "已暂停", icon: Pause },
-  { filter: "Completed", label: "已完成", icon: CheckCircle2 },
-  { filter: "Error", label: "错误/失败", icon: AlertCircle },
-];
+    { filter: "all", label: "全部任务", icon: List },
+    { filter: "Downloading", label: "下载中", icon: Download },
+    { filter: "Paused", label: "已暂停", icon: Pause },
+    { filter: "Completed", label: "已完成", icon: CheckCircle2 },
+    { filter: "Error", label: "错误/失败", icon: AlertCircle },
+  ];
 
 /** 队列图标映射：根据队列 icon 字段匹配 lucide-react 图标组件 */
 const QUEUE_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {

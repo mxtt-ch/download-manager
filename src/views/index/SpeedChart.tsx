@@ -58,20 +58,7 @@ function computeYAxisMax(maxBytesPerSec: number): number {
   return roundedUpMb * 1024 * 1024;
 }
 
-/**
- * 格式化速度文本为可读的 MB/s 或 KB/s
- *
- * @param bytesPerSec - 字节/秒
- * @returns 格式化字符串，例如 "10.5 MB/s" 或 "512 KB/s"
- */
-function formatSpeed(bytesPerSec: number): string {
-  const mb = bytesPerSec / (1024 * 1024);
-  if (mb >= 1) {
-    return `${mb.toFixed(1)} MB/s`;
-  }
-  const kb = bytesPerSec / 1024;
-  return `${kb.toFixed(0)} KB/s`;
-}
+import { formatSpeedSmart } from "@/utils/util";
 
 /** 生成虚线网格线 */
 function GridLines() {
@@ -170,7 +157,7 @@ export function SpeedChart() {
   const upAreaPath = buildAreaPath(upPoints);
 
   // 格式化 Y 轴标签
-  const yLabel = formatSpeed(yAxisMax).replace("/s", ""); // 只显示 "X.X MB"
+  const yLabel = formatSpeedSmart(yAxisMax).replace("/s", ""); // 只显示 "X.X MB"
 
   return (
     <div className="w-full">

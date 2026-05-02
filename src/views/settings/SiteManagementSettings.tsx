@@ -25,17 +25,7 @@ import { useToast } from "@/components/ui/toaster";
 import * as siteApi from "@/api/site";
 import type { SiteAuth } from "@/types";
 
-// ============================================================
-// 工具函数
-// ============================================================
-
-/** 将字节数格式化为可读字符串（B/KB/MB/GB/TB） */
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "--";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + " " + units[i];
-}
+import { formatBytes } from "@/utils/util";
 
 // ============================================================
 // 表单区块子组件
@@ -127,12 +117,12 @@ function SiteDialog({
   const [form, setForm] = useState(() =>
     initialData
       ? {
-          siteName: initialData.siteName,
-          domainPattern: initialData.domainPattern,
-          cookies: initialData.cookies ?? "",
-          customUa: initialData.customUa ?? "",
-          referer: initialData.referer ?? "",
-        }
+        siteName: initialData.siteName,
+        domainPattern: initialData.domainPattern,
+        cookies: initialData.cookies ?? "",
+        customUa: initialData.customUa ?? "",
+        referer: initialData.referer ?? "",
+      }
       : emptySiteForm(),
   );
 

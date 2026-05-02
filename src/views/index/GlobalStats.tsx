@@ -1,47 +1,9 @@
 import { useEffect } from "react";
 import { useDownloadStore } from "@/store/downloadStore";
-import { SpeedChart } from "@/components/SpeedChart";
+import { SpeedChart } from "./SpeedChart";
 import { Download, Upload, HardDrive } from "lucide-react";
 
-/**
- * 格式化字节数为人类可读的字符串
- *
- * @param bytes     - 字节数
- * @param decimals  - 小数位数，默认 1
- * @returns 格式化字符串，例如 "10.5 MB" 或 "1.2 GB"
- */
-function formatDiskSize(bytes: number, decimals = 1): string {
-  if (bytes <= 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  const value = bytes / Math.pow(k, i);
-  return `${value.toFixed(decimals)} ${sizes[i]}`;
-}
-
-/**
- * 格式化下载速度为 MB/s
- *
- * @param bytesPerSec - 字节/秒
- * @returns 格式化字符串，例如 "10.5"
- */
-function formatDownSpeed(bytesPerSec: number): string {
-  if (bytesPerSec <= 0) return "0.0";
-  const mb = bytesPerSec / (1024 * 1024);
-  return mb.toFixed(1);
-}
-
-/**
- * 格式化上传速度为 KB/s
- *
- * @param bytesPerSec - 字节/秒
- * @returns 格式化字符串，例如 "512"
- */
-function formatUpSpeed(bytesPerSec: number): string {
-  if (bytesPerSec <= 0) return "0";
-  const kb = bytesPerSec / 1024;
-  return kb.toFixed(0);
-}
+import { formatDiskSize, formatDownSpeed, formatUpSpeed } from "@/utils/util";
 
 /**
  * 全局统计区组件

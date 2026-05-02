@@ -15,11 +15,11 @@ import {
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { DownloadSettings } from "@/views/settings/DownloadSettings";
-import { SpeedSettings } from "@/views/settings/SpeedSettings";
-import { TaskManagementSettings } from "@/views/settings/TaskManagementSettings";
-import { SiteManagementSettings } from "@/views/settings/SiteManagementSettings";
-import { PlaceholderSettings } from "@/views/settings/PlaceholderSettings";
+import { DownloadSettings } from "./DownloadSettings";
+import { SpeedSettings } from "./SpeedSettings";
+import { TaskManagementSettings } from "./TaskManagementSettings";
+import { SiteManagementSettings } from "./SiteManagementSettings";
+import { PlaceholderSettings } from "./PlaceholderSettings";
 
 // ============================================================
 // 类型定义
@@ -79,7 +79,7 @@ function getNavLabel(tabId: string): string {
  * 左侧使用 radix Tabs（垂直方向）作为导航列表，
  * 右侧根据当前选中的 tab 渲染对应的设置子组件。
  */
-export function SettingsDialog({
+export default function SettingsDialog({
   open,
   initialTab = "download",
   onClose,

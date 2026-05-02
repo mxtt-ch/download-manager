@@ -8,6 +8,9 @@ export type TaskStatus =
   | "Merging"
   | "Checking";
 
+// 主题类型
+export type Theme = "dark" | "light";
+
 // 下载任务 — 与 Rust DownloadTask 对应
 export interface DownloadTask {
   id: string;
@@ -145,7 +148,7 @@ export interface SpeedSettings {
 export interface AppConfig {
   download: DownloadSettings;
   speed: SpeedSettings;
-  theme: "dark" | "light";
+  theme: Theme;
 }
 
 // 磁盘信息 — 与 Rust DiskInfo 对应

@@ -31,72 +31,23 @@ import {
 import { useTaskStore } from "@/store/taskStore";
 import type { DownloadTask, TaskStatus } from "@/types";
 
-// ============================================================
-// 格式化工具函数
-// ============================================================
+import { formatBytes, formatSpeed, formatEta, getFileType } from "@/utils/util";
 
-/** 将字节数格式化为可读字符串（B/KB/MB/GB/TB） */
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "--";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + " " + units[i];
-}
-
-/** 格式化下载速度（字节/秒） */
-function formatSpeed(bytesPerSec: number): string {
-  return formatBytes(bytesPerSec) + "/s";
-}
-
-/** 格式化剩余时间（秒 → "2分30秒" 或 "1小时5分" 等形式） */
-function formatEta(seconds: number): string {
-  if (!isFinite(seconds) || seconds <= 0) return "--";
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-
-  if (hrs > 0) {
-    return mins > 0 ? `${hrs}小时${mins}分` : `${hrs}小时`;
-  }
-  if (mins > 0) {
-    return secs > 0 ? `${mins}分${secs}秒` : `${mins}分`;
-  }
-  return `${secs}秒`;
-}
-
-/** 根据文件名后缀返回对应的图标组件 */
+/** 根据文件名返回对应的图标组件 */
 function getFileIcon(filename: string) {
-  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+  const fileType = getFileType(filename);
 
   const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    // 视频
-    mp4: FileVideo, mkv: FileVideo, avi: FileVideo, mov: FileVideo,
-    webm: FileVideo, flv: FileVideo, wmv: FileVideo,
-    // 压缩包
-    zip: FileArchive, rar: FileArchive, "7z": FileArchive,
-    tar: FileArchive, gz: FileArchive, bz2: FileArchive,
-    xz: FileArchive, zst: FileArchive,
-    // 代码
-    js: FileCode, ts: FileCode, tsx: FileCode, jsx: FileCode,
-    py: FileCode, rs: FileCode, go: FileCode, java: FileCode,
-    html: FileCode, css: FileCode, json: FileCode, xml: FileCode,
-    yaml: FileCode, yml: FileCode, toml: FileCode,
-    // 图片
-    png: FileImage, jpg: FileImage, jpeg: FileImage, gif: FileImage,
-    svg: FileImage, webp: FileImage, bmp: FileImage, ico: FileImage,
-    // 音频
-    mp3: FileAudio, wav: FileAudio, flac: FileAudio, aac: FileAudio,
-    ogg: FileAudio, wma: FileAudio,
-    // 文档
-    pdf: FileText, doc: FileText, docx: FileText, xls: FileText,
-    xlsx: FileText, ppt: FileText, pptx: FileText, txt: FileText,
-    epub: FileText, mobi: FileText,
-    // 系统镜像/可执行文件
-    exe: File, msi: File, iso: File, dmg: File, app: File,
+    video: FileVideo,
+    archive: FileArchive,
+    code: FileCode,
+    image: FileImage,
+    audio: FileAudio,
+    document: FileText,
+    executable: File,
   };
 
-  const IconComponent = iconMap[ext] ?? File;
-  return IconComponent;
+  return iconMap[fileType] ?? File;
 }
 
 // ============================================================
