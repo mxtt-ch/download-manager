@@ -1,0 +1,92 @@
+// ============================================================
+// 选择框组件样式
+// ============================================================
+
+.select-trigger {
+  display: flex;
+  height: 36px;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-input);
+  padding: 0 var(--spacing-md);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--border-focus);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.select-content {
+  position: relative;
+  z-index: 50;
+  max-height: 384px;
+  min-width: 8rem;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-md);
+
+  &[data-state="open"] {
+    animation: select-content-enter 150ms ease;
+  }
+
+  &[data-state="closed"] {
+    animation: select-content-exit 150ms ease;
+  }
+}
+
+.select-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  padding: 6px 32px 6px var(--spacing-sm);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  outline: none;
+
+  &:focus {
+    background-color: var(--bg-hover);
+  }
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+.select-chevron {
+  height: 16px;
+  width: 16px;
+  opacity: 0.5;
+}
+
+@keyframes select-content-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes select-content-exit {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}

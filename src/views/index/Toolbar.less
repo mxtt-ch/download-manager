@@ -1,0 +1,54 @@
+// ============================================================
+// 工具栏组件样式
+// ============================================================
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  height: 48px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-page);
+  flex-shrink: 0;
+  transition: all var(--transition-normal);
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__search {
+    flex: 1;
+    max-width: 256px;
+
+    input {
+      width: 100%;
+      height: 32px;
+      padding: 0 var(--spacing-md);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      background: transparent;
+      color: var(--text-primary);
+      transition: all var(--transition-fast);
+      outline: none;
+
+      &:focus {
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 1px var(--border-focus);
+      }
+
+      &::placeholder {
+        color: var(--text-muted);
+      }
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

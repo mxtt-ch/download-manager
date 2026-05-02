@@ -1,4 +1,5 @@
 import React from "react";
+import "./ErrorBoundary.less";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -39,19 +40,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       }
 
       return (
-        <div className="flex items-center justify-center min-h-screen bg-white dark:bg-slate-950">
-          <div className="text-center p-8">
-            <div className="text-4xl mb-4">⚠️</div>
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
-              页面出现异常
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 max-w-md">
+        <div className="error-page">
+          <div className="error-page__content">
+            <div className="error-page__icon">警告</div>
+            <h2 className="error-page__title">页面出现异常</h2>
+            <p className="error-page__message">
               {this.state.error?.message || "发生了未知错误"}
             </p>
-            <button
-              onClick={this.handleReset}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
+            <button onClick={this.handleReset} className="error-page__btn">
               重试
             </button>
           </div>

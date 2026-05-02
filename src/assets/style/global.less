@@ -1,43 +1,78 @@
-@import "./variables.less";
+// ============================================================
+// 全局样式 — App 级别的样式重置和基础设置
+// ============================================================
 
-// 页面主体
+@import "./theme/index.less";
+@import "./utilities.less";
+
+// ——— Reset ———
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: @bg-page-light;
-  color: @text-primary-light;
-  transition: background-color @transition-normal, color @transition-normal;
-
-  [data-theme="dark"] & {
-    background-color: @bg-page-dark;
-    color: @text-primary-dark;
-  }
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: var(--font-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-slow),
+    color var(--transition-slow);
 }
 
-// 滚动条美化
+// ——— 滚动条美化 ———
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: @border-light;
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 
-  [data-theme="dark"] & {
-    background: @border-dark;
-  }
-
   &:hover {
-    background: @text-muted-light;
-
-    [data-theme="dark"] & {
-      background: @text-muted-dark;
-    }
+    background: var(--scrollbar-thumb-hover);
   }
+}
+
+// ——— 链接重置 ———
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// ——— 按钮重置 ———
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// ——— 输入框重置 ———
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
 }

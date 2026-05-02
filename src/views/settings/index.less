@@ -1,0 +1,52 @@
+// ============================================================
+// 设置弹窗组件样式
+// ============================================================
+
+.settings-dialog {
+  display: flex;
+  height: 600px;
+
+  &__nav {
+    width: 192px;
+    border-right: 1px solid var(--border-color);
+    background-color: var(--bg-sidebar);
+    padding: var(--spacing-sm);
+    overflow-y: auto;
+  }
+
+  &__nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--bg-hover);
+    }
+
+    &--active {
+      background-color: var(--info-bg);
+      color: var(--info-text);
+    }
+  }
+
+  &__content {
+    flex: 1;
+    padding: var(--spacing-xl);
+    overflow-y: auto;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+  }
+}

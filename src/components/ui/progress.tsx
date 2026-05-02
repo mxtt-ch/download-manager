@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import "./progress.less";
 
 interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: number;
@@ -21,14 +21,11 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
         aria-valuenow={value}
         aria-valuemin={0}
         aria-valuemax={max}
-        className={cn(
-          "relative h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700",
-          className
-        )}
+        className={["progress", className].filter(Boolean).join(" ")}
         {...props}
       >
         <div
-          className="h-full w-full flex-1 bg-blue-600 transition-all duration-300 ease-in-out dark:bg-blue-500"
+          className="progress__bar"
           style={{ width: `${percentage}%` }}
         />
       </div>

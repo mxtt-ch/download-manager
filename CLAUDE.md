@@ -6,7 +6,7 @@
 
 ## 核心技术栈
 *   **框架:** Tauri (v2推荐)
-*   **前端:** React (Functional Components), TypeScript, Tailwind CSS
+*   **前端:** React (Functional Components), TypeScript, Less (CSS 预处理器)
 *   **后端:** Rust (Tokio 异步运行时, Reqwest/Hyper)
 *   **存储:** SQLite (任务与队列管理), JSON (本地设置持久化)
 *   **通信:** Tauri `invoke` 命令模式（统一封装）
@@ -51,7 +51,29 @@
 *   **类型:** 严禁使用 `any`，所有接口返回数据必须有对应的 `interface` 定义。
 *   **UI:** 严格遵循设计稿的间距与配色，支持深色模式切换。
 
+## 样式管理规范
 
+### 主题系统
+*   使用 `data-theme` 属性（`"dark"` | `"light"`）控制主题切换，挂载于 `<html>` 标签
+*   所有颜色、阴影、圆角等视觉属性通过 CSS 变量定义，变量声明位于 `src/assets/style/theme/index.less`
+*   主题切换动画：全屏覆盖层 + `clip-path: circle()` 从左上角(0,0)扩散至右下角
+
+### Less 样式文件
+*   一个 tsx 组件文件对应一个同名 .less 文件，放在同一目录下
+*   全局公共样式放在 `src/assets/style/` 目录：
+    *   `theme/index.less` — CSS 变量（浅色/深色主题）
+    *   `theme/light.less` — 浅色主题变量参考（Less 变量版）
+    *   `theme/dark.less` — 深色主题变量参考（Less 变量版）
+    *   `global.less` — 全局重置、滚动条、基础排版
+    *   `utilities.less` — 通用工具类（替代 Tailwind）
+    *   `App.less` — App 级别特有样式
+*   禁止使用 Tailwind CSS
+
+### 样式书写规范
+*   使用 BEM 命名法命名组件样式类
+*   颜色等视觉属性使用 CSS 变量（`var(--xxx)`），不硬编码具体色值
+*   布局和间距使用 `utilities.less` 中定义的工具类
+*   组件特有样式在对应的 .less 文件中定义
 
 ## 核心功能逻辑约定
 ### 1. 下载核心与线程调度 (Download Core)

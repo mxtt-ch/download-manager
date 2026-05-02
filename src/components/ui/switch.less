@@ -1,0 +1,52 @@
+// ============================================================
+// 开关组件样式
+// ============================================================
+
+.switch {
+  display: inline-flex;
+  height: 20px;
+  width: 36px;
+  flex-shrink: 0;
+  cursor: pointer;
+  align-items: center;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  transition: background-color var(--transition-fast);
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--border-focus);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &[data-state="checked"] {
+    background-color: var(--primary);
+  }
+
+  &[data-state="unchecked"] {
+    background-color: var(--border-color);
+  }
+
+  &__thumb {
+    pointer-events: none;
+    display: block;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast);
+
+    [data-state="checked"] > & {
+      transform: translateX(16px);
+    }
+
+    [data-state="unchecked"] > & {
+      transform: translateX(0);
+    }
+  }
+}

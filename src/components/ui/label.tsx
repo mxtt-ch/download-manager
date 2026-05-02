@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import "./label.less";
 
 /**
  * 标准标签组件
@@ -7,18 +7,8 @@ import { cn } from "@/lib/utils";
  */
 const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
   ({ className, ...props }, ref) => {
-    return (
-      <label
-        className={cn(
-          "text-sm font-medium leading-none text-slate-900",
-          "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
-          "dark:text-slate-100",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
+    const classes = ["label", className].filter(Boolean).join(" ");
+    return <label className={classes} ref={ref} {...props} />;
   }
 );
 Label.displayName = "Label";

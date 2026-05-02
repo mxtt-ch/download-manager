@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import "./table.less";
 
 /**
  * 表格容器组件
@@ -11,10 +11,7 @@ const Table = React.forwardRef<
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}
-      className={cn(
-        "w-full caption-bottom text-sm",
-        className
-      )}
+      className={["table", className].filter(Boolean).join(" ")}
       {...props}
     />
   </div>
@@ -30,10 +27,7 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn(
-      "[&_tr]:border-b border-b-slate-200 dark:border-b-slate-700",
-      className
-    )}
+    className={["table-header", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));
@@ -48,10 +42,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn(
-      "[&_tr:last-child]:border-0",
-      className
-    )}
+    className={["table-body", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));
@@ -59,7 +50,6 @@ TableBody.displayName = "TableBody";
 
 /**
  * 表格行动态样式
- * 带 hover 高亮和边框
  */
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
@@ -67,11 +57,7 @@ const TableRow = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tr
     ref={ref}
-    className={cn(
-      "border-b border-slate-200 transition-colors hover:bg-slate-50 data-[state=selected]:bg-slate-100",
-      "dark:border-slate-700 dark:hover:bg-slate-800 dark:data-[state=selected]:bg-slate-800",
-      className
-    )}
+    className={["table-row", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));
@@ -86,11 +72,7 @@ const TableHead = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <th
     ref={ref}
-    className={cn(
-      "h-10 px-2 text-left align-middle font-medium text-slate-500 dark:text-slate-400",
-      "[&:has([role=checkbox])]:pr-0",
-      className
-    )}
+    className={["table-head", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));
@@ -105,11 +87,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn(
-      "p-2 align-middle",
-      "[&:has([role=checkbox])]:pr-0",
-      className
-    )}
+    className={["table-cell", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));

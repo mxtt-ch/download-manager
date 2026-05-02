@@ -1,0 +1,46 @@
+// ============================================================
+// 表格组件样式
+// ============================================================
+
+.table {
+  width: 100%;
+  caption-side: bottom;
+  font-size: var(--font-sm);
+}
+
+.table-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-body {
+  tr:last-child {
+    border-bottom: none;
+  }
+}
+
+.table-row {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-fast);
+
+  &:hover {
+    background-color: var(--bg-hover);
+  }
+
+  &[data-state="selected"] {
+    background-color: var(--bg-active);
+  }
+}
+
+.table-head {
+  height: 40px;
+  padding: 0 var(--spacing-sm);
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.table-cell {
+  padding: var(--spacing-sm);
+  vertical-align: middle;
+}

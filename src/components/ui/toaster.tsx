@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Toast, type ToastProps } from "./toast";
+import "./toast.less";
 
 /**
  * Toast 操作类型
@@ -71,10 +72,6 @@ interface ToastInput {
 /**
  * useToast Hook
  * 全局 toast 通知管理器，基于模块级变量 + listener 模式
- *
- * @example
- * const { toast } = useToast();
- * toast({ title: "下载完成", description: "文件已保存到本地" });
  */
 function useToast() {
   const [state, setState] = React.useState<ToastState>(memoryState);
@@ -92,32 +89,21 @@ function useToast() {
   const toast = React.useCallback(
     ({ duration = 4000, ...props }: ToastInput) => {
       const id = genId();
-
-      dispatch({
-        type: "ADD_TOAST",
-        toast: { ...props, id, duration },
-      });
-
+      dispatch({ type: "ADD_TOAST", toast: { ...props, id, duration } });
       if (duration > 0) {
         setTimeout(() => {
           dispatch({ type: "REMOVE_TOAST", toastId: id });
         }, duration);
       }
-
       return id;
-    },
-    []
+    }, []
   );
 
   const dismiss = React.useCallback((toastId: string) => {
     dispatch({ type: "REMOVE_TOAST", toastId });
   }, []);
 
-  return {
-    toasts: state.toasts,
-    toast,
-    dismiss,
-  };
+  return { toasts: state.toasts, toast, dismiss };
 }
 
 /**
@@ -128,11 +114,7 @@ const Toaster = () => {
   const { toasts, dismiss } = useToast();
 
   return (
-    <div
-      className="fixed bottom-4 right-4 z-[100] flex max-w-sm flex-col gap-2"
-      aria-live="polite"
-      aria-label="通知"
-    >
+    <div className="toaster" aria-live="polite" aria-label="通知">
       {toasts.map((t) => (
         <Toast
           key={t.id}

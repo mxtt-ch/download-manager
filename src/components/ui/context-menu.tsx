@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { cn } from "@/lib/utils";
+import "./context-menu.less";
 
 const ContextMenu = ContextMenuPrimitive.Root;
 const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
@@ -15,14 +15,7 @@ const ContextMenuContent = React.forwardRef<
   <ContextMenuPrimitive.Portal>
     <ContextMenuPrimitive.Content
       ref={ref}
-      className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-200 bg-white p-1 shadow-md",
-        "dark:border-slate-700 dark:bg-slate-900",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out",
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        className
-      )}
+      className={["context-menu-content", className].filter(Boolean).join(" ")}
       {...props}
     />
   </ContextMenuPrimitive.Portal>
@@ -38,12 +31,7 @@ const ContextMenuItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ContextMenuPrimitive.Item
     ref={ref}
-    className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-slate-900 outline-none",
-      "focus:bg-slate-100 focus:text-slate-900 dark:focus:bg-slate-800 dark:text-slate-100",
-      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
-    )}
+    className={["context-menu-item", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));
@@ -58,10 +46,7 @@ const ContextMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ContextMenuPrimitive.Separator
     ref={ref}
-    className={cn(
-      "-mx-1 my-1 h-px bg-slate-200 dark:bg-slate-700",
-      className
-    )}
+    className={["context-menu-separator", className].filter(Boolean).join(" ")}
     {...props}
   />
 ));

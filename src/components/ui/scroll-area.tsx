@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import "./scroll-area.less";
 
 /**
  * 滚动区域容器组件
@@ -9,12 +9,9 @@ const ScrollArea = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
+  const classes = ["scroll-area", className].filter(Boolean).join(" ");
   return (
-    <div
-      ref={ref}
-      className={cn("overflow-auto", className)}
-      {...props}
-    >
+    <div ref={ref} className={classes} {...props}>
       {children}
     </div>
   );

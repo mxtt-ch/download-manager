@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import "@/assets/style/sidebar.less";
+import "./Sidebar.less";
 import { useTaskStore } from "@/store/taskStore";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getQueues } from "@/api/queues";
 import type { Queue, TaskFilter } from "@/types";
-import { cn } from "@/lib/utils";
 import {
   List,
   Download,
@@ -101,18 +100,16 @@ export function Sidebar({ onOpenSettings }: SidebarProps) {
     if (icon && icon in QUEUE_ICON_MAP) {
       return QUEUE_ICON_MAP[icon];
     }
-    return List; // 无匹配时回退为 List 图标
+    return List;
   };
 
   return (
-    <aside className="w-56 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full">
+    <aside className="sidebar">
       {/* ================================================================ */}
       {/* A. 状态统计区 — 任务过滤按钮                                */}
       {/* ================================================================ */}
-      <div className="p-3 space-y-1">
-        <p className="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider select-none">
-          状态过滤
-        </p>
+      <div className="p-md" style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+        <p className="sidebar__section-title">状态过滤</p>
         {FILTER_BUTTONS.map(({ filter: f, label, icon: Icon }) => {
           const isActive = filter === f;
           return (
@@ -120,12 +117,7 @@ export function Sidebar({ onOpenSettings }: SidebarProps) {
               key={f}
               type="button"
               onClick={() => handleFilterClick(f)}
-              className={cn(
-                "flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-sm transition-colors",
-                isActive
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800",
-              )}
+              className={`sidebar__item ${isActive ? "sidebar__item--active" : ""}`}
             >
               <Icon className="h-4 w-4 shrink-0" />
               <span>{label}</span>
@@ -135,16 +127,14 @@ export function Sidebar({ onOpenSettings }: SidebarProps) {
       </div>
 
       {/* 分割线 */}
-      <div className="mx-3 h-px bg-slate-200 dark:bg-slate-800 shrink-0" />
+      <div className="sidebar__divider" />
 
       {/* ================================================================ */}
       {/* B. 队列管理区 — 列表项可点击选中/取消选中                  */}
       {/* ================================================================ */}
-      <div className="flex-1 flex flex-col min-h-0 p-3">
-        <p className="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider select-none shrink-0">
-          队列管理
-        </p>
-        <div className="flex-1 overflow-auto my-1 space-y-0.5">
+      <div className="flex-1 flex flex-col min-h-0 p-md">
+        <p className="sidebar__section-title shrink-0">队列管理</p>
+        <div className="flex-1 overflow-auto" style={{ margin: "4px 0", display: "flex", flexDirection: "column", gap: "2px" }}>
           {queues.map((q) => {
             const IconComp = getQueueIcon(q.icon);
             const isSelected = selectedQueueId === q.id;
@@ -153,12 +143,7 @@ export function Sidebar({ onOpenSettings }: SidebarProps) {
                 key={q.id}
                 type="button"
                 onClick={() => handleQueueClick(q.id)}
-                className={cn(
-                  "flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-sm text-left transition-colors",
-                  isSelected
-                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800",
-                )}
+                className={`sidebar__item ${isSelected ? "sidebar__item--active" : ""}`}
               >
                 <IconComp className="h-4 w-4 shrink-0" />
                 <span className="truncate">{q.name}</span>
@@ -169,21 +154,19 @@ export function Sidebar({ onOpenSettings }: SidebarProps) {
       </div>
 
       {/* 分割线 */}
-      <div className="mx-3 h-px bg-slate-200 dark:bg-slate-800 shrink-0" />
+      <div className="sidebar__divider" />
 
       {/* ================================================================ */}
       {/* C. 工具区 — 点击跳转设置弹窗对应 tab                       */}
       {/* ================================================================ */}
-      <div className="p-3 space-y-1">
-        <p className="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider select-none">
-          工具
-        </p>
+      <div className="p-md" style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+        <p className="sidebar__section-title">工具</p>
         {TOOL_LINKS.map(({ tab, label, icon: Icon }) => (
           <button
             key={tab}
             type="button"
             onClick={() => onOpenSettings(tab)}
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            className="sidebar__item"
           >
             <Icon className="h-4 w-4 shrink-0" />
             <span>{label}</span>
@@ -192,16 +175,16 @@ export function Sidebar({ onOpenSettings }: SidebarProps) {
       </div>
 
       {/* 分割线 */}
-      <div className="mx-3 h-px bg-slate-200 dark:bg-slate-800 shrink-0" />
+      <div className="sidebar__divider" />
 
       {/* ================================================================ */}
       {/* D. 底部主题切换 — 深色/浅色模式                            */}
       {/* ================================================================ */}
-      <div className="p-3">
+      <div className="p-md">
         <button
           type="button"
           onClick={toggleTheme}
-          className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+          className="sidebar__item"
         >
           {theme === "dark" ? (
             <Sun className="h-4 w-4 shrink-0" />

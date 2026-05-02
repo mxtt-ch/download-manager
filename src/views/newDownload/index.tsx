@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "@/assets/style/dialog.less";
+import "./index.less";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
@@ -16,9 +16,7 @@ interface NewDownloadDialogProps {
 
 /**
  * 新建下载弹窗 - 主容器组件
- * 
  * 负责管理表单状态、队列加载和任务提交逻辑
- * 根据当前选中的下载模式渲染对应的子组件
  */
 export default function NewDownloadDialog({ open, onClose }: NewDownloadDialogProps) {
   const { toast } = useToast();
@@ -39,50 +37,34 @@ export default function NewDownloadDialog({ open, onClose }: NewDownloadDialogPr
   const [queues, setQueues] = useState<Queue[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /** 更新单个表单字段 */
-  const updateField = <K extends keyof NewDownloadForm>(
-    key: K,
-    value: NewDownloadForm[K],
-  ) => {
+  const updateField = <K extends keyof NewDownloadForm>(key: K, value: NewDownloadForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  /** 挂载时加载队列列表，默认选中第一个 */
   useEffect(() => {
     getQueues()
       .then((list) => {
         setQueues(list);
-        if (list.length > 0) {
-          setForm((prev) => ({ ...prev, queueId: list[0].id }));
-        }
+        if (list.length > 0) setForm((prev) => ({ ...prev, queueId: list[0].id }));
       })
       .catch(console.error);
   }, []);
 
-  /** 挂载时尝试从剪贴板读取 URL */
   useEffect(() => {
-    navigator.clipboard
-      .readText()
+    navigator.clipboard.readText()
       .then((text) => {
         if (text.startsWith("http://") || text.startsWith("https://")) {
           setForm((prev) => ({ ...prev, url: text }));
         }
       })
-      .catch(() => {
-        // 剪贴板访问被拒绝或为空，静默忽略
-      });
+      .catch(() => {});
   }, []);
 
-  /** 提交表单创建下载任务 */
   const handleSubmit = async () => {
     if (!form.url.trim()) return;
     setIsSubmitting(true);
     try {
-      await addTask({
-        ...form,
-        // 空文件名回退为 undefined，由后端自动解析
-        filename: form.filename.trim() || undefined,
-      });
+      await addTask({ ...form, filename: form.filename.trim() || undefined });
       toast({ title: "任务已创建" });
       onClose();
     } catch {
@@ -94,25 +76,16 @@ export default function NewDownloadDialog({ open, onClose }: NewDownloadDialogPr
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent className="max-w-[520px]">
         <DialogHeader>
           <DialogTitle>新建下载</DialogTitle>
         </DialogHeader>
 
-        {/* URL 下载模式 — 子组件内部以 Tabs 切换 URL/BT/磁力 */}
         <UrlDownload form={form} queues={queues} onUpdateField={updateField} />
 
-        {/* 底部按钮 */}
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
-            取消
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!form.url.trim() || isSubmitting}
-          >
-            立即下载
-          </Button>
+        <div className="download-dialog__actions">
+          <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>取消</Button>
+          <Button onClick={handleSubmit} disabled={!form.url.trim() || isSubmitting}>立即下载</Button>
         </div>
       </DialogContent>
     </Dialog>

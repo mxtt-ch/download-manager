@@ -1,0 +1,89 @@
+// ============================================================
+// 任务表格组件样式
+// ============================================================
+
+.task-table {
+  flex: 1;
+  overflow: auto;
+
+  &__row {
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    border-bottom: 1px solid var(--border-color);
+
+    &:hover {
+      background-color: var(--bg-hover);
+    }
+  }
+
+  &__filename {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-width: 0;
+    max-width: 400px;
+
+    span {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__status {
+    display: inline-flex;
+    padding: 2px var(--spacing-sm);
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &--pending {
+      background-color: var(--bg-hover);
+      color: var(--text-secondary);
+    }
+
+    &--downloading {
+      background-color: var(--info-bg);
+      color: var(--info-text);
+    }
+
+    &--paused {
+      background-color: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    &--completed {
+      background-color: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    &--error {
+      background-color: var(--error-bg);
+      color: var(--error-text);
+    }
+  }
+
+  &__sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+}
