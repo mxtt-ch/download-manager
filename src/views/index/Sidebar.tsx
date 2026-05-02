@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "@/assets/style/sidebar.less";
 import { useTaskStore } from "@/store/taskStore";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getQueues } from "@/api/queues";

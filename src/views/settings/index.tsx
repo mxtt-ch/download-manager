@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "@/assets/style/dialog.less";
 import {
   Download,
   Wifi,

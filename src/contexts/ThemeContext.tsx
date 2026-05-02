@@ -29,10 +29,9 @@ function getSystemTheme(): Theme {
   return "dark"; // 默认深色
 }
 
-/** 主题 Provider — 支持系统主题自动同步和手动覆盖 */
+/** 主题 Provider — 支持系统主题自动同步和手动覆盖，使用 data-theme 属性 */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // 启动时读取系统主题
     return getSystemTheme();
   });
 
@@ -45,20 +44,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(newTheme);
     };
 
-    // 添加监听器
     mediaQuery.addEventListener("change", handleChange);
-
-    // 清理监听器
     return () => {
       mediaQuery.removeEventListener("change", handleChange);
     };
   }, []);
 
-  // 应用主题到 DOM
+  // 应用主题到 DOM，使用 data-theme 属性
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("dark", theme === "dark");
-    // 不保存到 localStorage，每次启动都重新读取系统主题
+    root.setAttribute("data-theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {

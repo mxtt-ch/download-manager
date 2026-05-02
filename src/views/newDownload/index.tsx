@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "@/assets/style/dialog.less";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
@@ -7,8 +8,6 @@ import { useSettingsStore } from "@/store/settingsStore";
 import { getQueues } from "@/api/queues";
 import type { NewDownloadForm, Queue } from "@/types";
 import { UrlDownload } from "./UrlDownload";
-import { BtDownload } from "./BtDownload";
-import { MagnetDownload } from "./MagnetDownload";
 
 interface NewDownloadDialogProps {
   open: boolean;
@@ -39,7 +38,6 @@ export default function NewDownloadDialog({ open, onClose }: NewDownloadDialogPr
 
   const [queues, setQueues] = useState<Queue[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [downloadMode, setDownloadMode] = useState<"url" | "bt" | "magnet">("url");
 
   /** 更新单个表单字段 */
   const updateField = <K extends keyof NewDownloadForm>(
@@ -94,20 +92,6 @@ export default function NewDownloadDialog({ open, onClose }: NewDownloadDialogPr
     }
   };
 
-  /** 根据下载模式渲染对应的内容组件 */
-  const renderContent = () => {
-    switch (downloadMode) {
-      case "url":
-        return <UrlDownload form={form} queues={queues} onUpdateField={updateField} />;
-      case "bt":
-        return <BtDownload />;
-      case "magnet":
-        return <MagnetDownload />;
-      default:
-        return <UrlDownload form={form} queues={queues} onUpdateField={updateField} />;
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="sm:max-w-[520px]">
@@ -115,8 +99,8 @@ export default function NewDownloadDialog({ open, onClose }: NewDownloadDialogPr
           <DialogTitle>新建下载</DialogTitle>
         </DialogHeader>
 
-        {/* 渲染当前下载模式的内容 */}
-        {renderContent()}
+        {/* URL 下载模式 — 子组件内部以 Tabs 切换 URL/BT/磁力 */}
+        <UrlDownload form={form} queues={queues} onUpdateField={updateField} />
 
         {/* 底部按钮 */}
         <div className="flex justify-end gap-2 pt-2">

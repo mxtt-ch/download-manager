@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "@/assets/style/detail-panel.less";
 import { useTaskStore } from "@/store/taskStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";

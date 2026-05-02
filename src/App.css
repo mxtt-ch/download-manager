@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --background: 255 255 255;
   --foreground: 15 23 42;
@@ -15,7 +17,7 @@
   --radius: 0.5rem;
 }
 
-.dark {
+[data-theme="dark"] {
   --background: 15 23 42;
   --foreground: 226 232 240;
   --card: 30 41 59;

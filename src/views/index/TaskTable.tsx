@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from "react";
+import "@/assets/style/task-table.less";
 import {
   Table,
   TableHeader,

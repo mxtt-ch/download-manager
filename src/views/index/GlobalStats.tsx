@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import "@/assets/style/global-stats.less";
 import { useDownloadStore } from "@/store/downloadStore";
 import { SpeedChart } from "./SpeedChart";
 import { Download, Upload, HardDrive } from "lucide-react";
