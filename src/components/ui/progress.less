@@ -1,0 +1,20 @@
+// ============================================================
+// 进度条组件样式
+// ============================================================
+
+.progress {
+  position: relative;
+  height: 12px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-hover);
+
+  &__bar {
+    height: 100%;
+    width: 100%;
+    flex: 1;
+    background-color: var(--primary);
+    transition: width 300ms ease-in-out;
+  }
+}

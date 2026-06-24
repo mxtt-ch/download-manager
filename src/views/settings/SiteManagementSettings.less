@@ -1,0 +1,91 @@
+// ============================================================
+// 站点管理设置组件样式
+// ============================================================
+
+.site-list {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+  }
+
+  &__status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-xs);
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &--logged-in {
+      background-color: #22c55e;
+    }
+
+    &--unknown {
+      background-color: var(--text-muted);
+    }
+
+    &--expired,
+    &--error {
+      background-color: var(--error-text);
+    }
+  }
+}
+
+.site-dialog {
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__label {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+  }
+
+  &__textarea {
+    display: flex;
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-input);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-sm);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-fast);
+    resize: none;
+    font-family: monospace;
+    font-size: 11px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+    }
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+  }
+}

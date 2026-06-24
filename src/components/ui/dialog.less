@@ -1,0 +1,116 @@
+// ============================================================
+// 对话框组件样式
+// ============================================================
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: var(--bg-overlay);
+
+  &[data-state="open"] {
+    animation: dialog-fade-in 150ms ease;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-fade-out 150ms ease;
+  }
+}
+
+.dialog-content {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 50;
+  display: grid;
+  width: 100%;
+  max-width: 32rem;
+  transform: translate(-50%, -50%);
+  gap: var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg);
+
+  &[data-state="open"] {
+    animation: dialog-zoom-in 150ms ease;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-zoom-out 150ms ease;
+  }
+}
+
+.dialog-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+
+  @media (min-width: 640px) {
+    text-align: left;
+  }
+}
+
+.dialog-title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.dialog-description {
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+}
+
+.dialog-close {
+  position: absolute;
+  right: var(--spacing-lg);
+  top: var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--border-focus);
+  }
+}
+
+@keyframes dialog-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes dialog-zoom-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-zoom-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}

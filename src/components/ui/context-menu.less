@@ -1,0 +1,60 @@
+// ============================================================
+// 右键菜单组件样式
+// ============================================================
+
+.context-menu-content {
+  z-index: 50;
+  min-width: 8rem;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  padding: var(--spacing-xs);
+  box-shadow: var(--shadow-md);
+
+  &[data-state="open"] {
+    animation: cm-enter 150ms ease;
+  }
+
+  &[data-state="closed"] {
+    animation: cm-exit 150ms ease;
+  }
+}
+
+.context-menu-item {
+  position: relative;
+  display: flex;
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  padding: 6px var(--spacing-sm);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  outline: none;
+
+  &:focus {
+    background-color: var(--bg-hover);
+  }
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+.context-menu-separator {
+  margin: var(--spacing-xs) -4px;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+@keyframes cm-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cm-exit {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}

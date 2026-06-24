@@ -1,0 +1,26 @@
+[
+  {
+    "id": "queue-default",
+    "name": "默认队列",
+    "sortWeight": 0,
+    "icon": "list"
+  },
+  {
+    "id": "queue-video",
+    "name": "影视",
+    "sortWeight": 1,
+    "icon": "film"
+  },
+  {
+    "id": "queue-software",
+    "name": "软件",
+    "sortWeight": 2,
+    "icon": "download"
+  },
+  {
+    "id": "queue-learning",
+    "name": "学习资料",
+    "sortWeight": 3,
+    "icon": "book"
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "download": {
+    "defaultPath": "D:/Downloads/",
+    "maxConcurrentTasks": 5,
+    "maxThreadsPerTask": 8,
+    "enableResume": true,
+    "postDownloadAction": "notify",
+    "fileConflictPolicy": "ask",
+    "autoCreateSubdir": true,
+    "monitorClipboard": false
+  },
+  "speed": {
+    "downloadLimit": 0,
+    "uploadLimit": 0,
+    "speedMode": "unlimited",
+    "allocationMode": "global",
+    "smartAcceleration": false,
+    "accelerationThreshold": 10,
+    "applyLimitOnStartup": false,
+    "whitelistTaskIds": []
+  },
+  "theme": "dark"
+}

@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>多线程异步下载管理器</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- IconFont -->
+<link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4629065_v4k9sy2n6p.css"/>
+
+<style>
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+    background:#dfe3ea;
+}
+
+::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#d7dbe5;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.window-shadow{
+    box-shadow:
+    0 1px 2px rgba(0,0,0,.04),
+    0 8px 24px rgba(0,0,0,.06);
+}
+
+.panel-shadow{
+    box-shadow:
+    0 1px 2px rgba(0,0,0,.03),
+    0 4px 10px rgba(0,0,0,.03);
+}
+
+.task-row:hover{
+    background:#fafcff;
+}
+
+.left-menu-item{
+    transition:.15s;
+}
+
+.left-menu-item:hover{
+    background:#f4f7fd;
+}
+
+.left-menu-active{
+    background:#eef3ff;
+    color:#2563eb;
+    font-weight:600;
+}
+
+.toolbar-btn{
+    transition:.15s;
+}
+
+.toolbar-btn:hover{
+    background:#f7f9fc;
+}
+
+.primary-btn{
+    background:#2563eb;
+    color:#fff;
+}
+
+.primary-btn:hover{
+    background:#1d56d7;
+}
+
+.modal-mask{
+    backdrop-filter:blur(3px);
+}
+
+.chart-line-blue{
+    fill:none;
+    stroke:#2563eb;
+    stroke-width:3;
+}
+
+.chart-line-green{
+    fill:none;
+    stroke:#22c55e;
+    stroke-width:3;
+}
+
+.chart-grid{
+    stroke:#edf1f7;
+    stroke-width:1;
+}
+
+.tab-active{
+    color:#2563eb;
+    font-weight:600;
+    position:relative;
+}
+
+.tab-active::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-1px;
+    width:100%;
+    height:2px;
+    background:#2563eb;
+    border-radius:10px;
+}
+
+.download-tab-active{
+    color:#2563eb;
+    font-weight:600;
+    position:relative;
+}
+
+.download-tab-active::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-10px;
+    width:100%;
+    height:2px;
+    background:#2563eb;
+    border-radius:20px;
+}
+
+input:focus,
+textarea:focus{
+    outline:none;
+    border-color:#8cb4ff !important;
+    box-shadow:0 0 0 3px rgba(37,99,235,.08);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 整体窗口 -->
+<div class="w-screen h-screen bg-white overflow-hidden flex flex-col border border-[#cfd4dc]">
+
+    <!-- 顶栏 -->
+    <div class="h-[72px] border-b border-[#e8ebf2] flex items-center justify-between px-5 bg-white flex-shrink-0">
+
+        <!-- 左 -->
+        <div class="flex items-center gap-4">
+
+            <!-- logo -->
+            <div class="w-11 h-11 rounded-xl bg-[#eef3ff] border border-[#dce6ff] flex items-center justify-center">
+
+                <div class="w-8 h-8 rounded-lg bg-[#2563eb] flex items-center justify-center text-white text-lg">
+                    <i class="iconfont icon-xiazai"></i>
+                </div>
+
+            </div>
+
+            <!-- title -->
+            <div>
+
+                <div class="text-[28px] font-bold text-[#1f2937] tracking-[0.5px]">
+                    多线程异步下载管理器
+                </div>
+
+                <div class="text-[15px] text-[#8b93a3] mt-[2px]">
+                    v1.0.0
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 右 -->
+        <div class="flex items-center gap-5 text-[#555]">
+
+            <button class="w-8 h-8 rounded hover:bg-[#f3f4f6] flex items-center justify-center">
+                <i class="iconfont icon-jianhao text-[14px]"></i>
+            </button>
+
+            <button class="w-8 h-8 rounded hover:bg-[#f3f4f6] flex items-center justify-center">
+                <i class="iconfont icon-fangkuang text-[14px]"></i>
+            </button>
+
+            <button class="w-8 h-8 rounded hover:bg-[#fff1f1] hover:text-red-500 flex items-center justify-center">
+                <i class="iconfont icon-guanbi text-[14px]"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 主区域 -->
+    <div class="flex-1 overflow-hidden flex bg-[#f7f8fc]">
+
+        <!-- 左侧菜单 -->
+        <aside class="w-[245px] bg-[#fbfcfe] border-r border-[#e8ebf2] flex flex-col">
+
+            <div class="p-4 overflow-auto">
+
+                <!-- 一级菜单 -->
+                <div class="space-y-1">
+
+                    <div class="left-menu-item left-menu-active h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-quanbu text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            全部任务
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#dce8ff] text-[#2563eb] text-[12px] px-2 flex items-center justify-center">
+                            12
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-shijian text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            下载中
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            4
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-zanting text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            已暂停
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            2
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-gouxuan text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            已完成
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            5
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-jinggao text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            错误/失败
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            1
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 标题 -->
+                <div class="mt-7 mb-2 px-2 text-[13px] text-[#9aa1af]">
+                    队列管理
+                </div>
+
+                <!-- 队列 -->
+                <div class="space-y-1">
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-wenjianjia text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            默认队列
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            8
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-shipin text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            影视资源
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            2
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-yingyong text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            软件安装包
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            1
+                        </div>
+
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+
+                        <i class="iconfont icon-wendang text-[18px] mr-3"></i>
+
+                        <span class="text-[15px]">
+                            学习资料
+                        </span>
+
+                        <div class="ml-auto min-w-[24px] h-[22px] rounded-full bg-[#f1f3f7] text-[#666] text-[12px] px-2 flex items-center justify-center">
+                            1
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 工具 -->
+                <div class="mt-7 mb-2 px-2 text-[13px] text-[#9aa1af]">
+                    工具
+                </div>
+
+                <div class="space-y-1">
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+                        <i class="iconfont icon-rili text-[18px] mr-3"></i>
+                        <span class="text-[15px]">计划任务</span>
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+                        <i class="iconfont icon-sudu text-[18px] mr-3"></i>
+                        <span class="text-[15px]">速度限制</span>
+                    </div>
+
+                    <div class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer">
+                        <i class="iconfont icon-lianjie text-[18px] mr-3"></i>
+                        <span class="text-[15px]">站点管理</span>
+                    </div>
+
+                    <div
+                        id="openSettings"
+                        class="left-menu-item h-12 rounded-xl flex items-center px-4 cursor-pointer"
+                    >
+                        <i class="iconfont icon-shezhi text-[18px] mr-3"></i>
+                        <span class="text-[15px]">下载设置</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- 底部 -->
+            <div class="mt-auto border-t border-[#edf1f7] p-4">
+
+                <div class="h-12 rounded-xl flex items-center px-3 text-[#444]">
+                    <i class="iconfont icon-yueliang mr-3"></i>
+                    深色模式
+                </div>
+
+            </div>
+
+        </aside>
+
+        <!-- 中间 -->
+        <main class="flex-1 flex flex-col overflow-hidden p-4 gap-4">
+
+            <!-- toolbar -->
+            <div class="flex items-center justify-between">
+
+                <!-- 左 -->
+                <div class="flex items-center gap-3">
+
+                    <button
+                        id="openDownloadModal"
+                        class="toolbar-btn primary-btn h-11 px-5 rounded-xl flex items-center text-[14px]"
+                    >
+
+                        <i class="iconfont icon-jia text-[14px] mr-2"></i>
+
+                        新建下载
+
+                    </button>
+
+                    <button class="toolbar-btn h-11 px-5 rounded-xl border border-[#dfe3ea] bg-white flex items-center text-[14px]">
+                        <i class="iconfont icon-bofang mr-2"></i>
+                        开始
+                    </button>
+
+                    <button class="toolbar-btn h-11 px-5 rounded-xl border border-[#dfe3ea] bg-white flex items-center text-[14px]">
+                        <i class="iconfont icon-zanting mr-2"></i>
+                        暂停
+                    </button>
+
+                    <button class="toolbar-btn h-11 px-5 rounded-xl border border-[#dfe3ea] bg-white flex items-center text-[14px]">
+                        <i class="iconfont icon-shanchu mr-2"></i>
+                        删除
+                    </button>
+
+                    <button class="toolbar-btn h-11 px-5 rounded-xl border border-[#dfe3ea] bg-white flex items-center text-[14px]">
+                        <i class="iconfont icon-shuaxin mr-2"></i>
+                        刷新
+                    </button>
+
+                </div>
+
+                <!-- 右 -->
+                <div class="flex items-center gap-3">
+
+                    <div class="w-[330px] h-11 bg-white border border-[#dfe3ea] rounded-xl px-4 flex items-center">
+
+                        <i class="iconfont icon-sousuo text-[#9aa1af] mr-3"></i>
+
+                        <input
+                            class="flex-1 bg-transparent text-[14px]"
+                            placeholder="搜索任务名称或URL"
+                        />
+
+                    </div>
+
+                    <button class="toolbar-btn h-11 px-5 rounded-xl border border-[#dfe3ea] bg-white flex items-center text-[14px]">
+                        <i class="iconfont icon-shaixuan mr-2"></i>
+                        筛选
+                    </button>
+
+                    <button
+                        id="openSettings2"
+                        class="toolbar-btn h-11 px-5 rounded-xl border border-[#dfe3ea] bg-white flex items-center text-[14px]"
+                    >
+                        <i class="iconfont icon-shezhi mr-2"></i>
+                        设置
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- table -->
+            <div class="flex-1 bg-white border border-[#e8ebf2] rounded-2xl overflow-hidden flex flex-col panel-shadow">
+
+                <!-- header -->
+                <div class="h-11 bg-[#fcfcfd] border-b border-[#edf1f7] grid items-center text-[13px] text-[#666]"
+                    style="grid-template-columns:3fr 1fr 1.8fr 1fr 1fr 1fr 1fr 1.2fr">
+
+                    <div class="px-5">文件名</div>
+                    <div>大小</div>
+                    <div>进度</div>
+                    <div>速度</div>
+                    <div>剩余时间</div>
+                    <div>状态</div>
+                    <div>线程数</div>
+                    <div>操作</div>
+
+                </div>
+
+                <!-- body -->
+                <div class="flex-1 overflow-auto">
+
+                    <!-- row -->
+                    <div class="task-row h-[58px] border-b border-[#f3f5fa] grid items-center text-[14px]"
+                        style="grid-template-columns:3fr 1fr 1.8fr 1fr 1fr 1fr 1fr 1.2fr">
+
+                        <div class="px-5 flex items-center">
+
+                            <div class="w-8 h-8 rounded-lg bg-[#5a8bff] flex items-center justify-center text-white mr-4">
+                                <i class="iconfont icon-shipin"></i>
+                            </div>
+
+                            Ubuntu-22.04.4-desktop-amd64.iso
+
+                        </div>
+
+                        <div>4.68 GB</div>
+
+                        <div>
+
+                            <div class="mb-1 text-[13px]">
+                                72.35%
+                            </div>
+
+                            <div class="w-[140px] h-[6px] rounded-full bg-[#edf1f7] overflow-hidden">
+                                <div class="h-full w-[72%] bg-[#2563eb] rounded-full"></div>
+                            </div>
+
+                        </div>
+
+                        <div>6.12 MB/s</div>
+
+                        <div>00:01:15</div>
+
+                        <div class="text-[#2563eb] font-medium">
+                            下载中
+                        </div>
+
+                        <div>16/16</div>
+
+                        <div class="flex items-center gap-4 text-[#666]">
+
+                            <i class="iconfont icon-zanting cursor-pointer"></i>
+                            <i class="iconfont icon-guanbi cursor-pointer"></i>
+                            <i class="iconfont icon-wenjianjia cursor-pointer"></i>
+                            <i class="iconfont icon-gengduo cursor-pointer"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- bottom -->
+            <div class="h-[420px] grid grid-cols-[2.3fr_1.3fr_1fr] gap-4 overflow-hidden">
+
+                <!-- detail -->
+                <div class="bg-white rounded-2xl border border-[#e8ebf2] overflow-hidden flex flex-col panel-shadow">
+
+                    <!-- tabs -->
+                    <div class="h-11 border-b border-[#edf1f7] px-5 flex items-end gap-8 text-[14px]">
+
+                        <div class="tab-active h-11 flex items-center">
+                            任务详情
+                        </div>
+
+                        <div class="h-11 flex items-center text-[#666]">
+                            线程信息
+                        </div>
+
+                        <div class="h-11 flex items-center text-[#666]">
+                            文件列表
+                        </div>
+
+                        <div class="h-11 flex items-center text-[#666]">
+                            日志
+                        </div>
+
+                        <div class="h-11 flex items-center text-[#666]">
+                            连接信息
+                        </div>
+
+                    </div>
+
+                    <!-- content -->
+                    <div class="flex-1 overflow-auto p-5">
+
+                        <div class="flex">
+
+                            <div class="w-11 h-11 rounded-xl bg-[#5a8bff] text-white flex items-center justify-center mr-4">
+                                <i class="iconfont icon-shipin text-[18px]"></i>
+                            </div>
+
+                            <div>
+
+                                <div class="text-[18px] font-semibold text-[#1f2937] mb-1">
+                                    Ubuntu-22.04.4-desktop-amd64.iso
+                                </div>
+
+                                <div class="text-[14px] text-[#2563eb]">
+                                    https://releases.ubuntu.com/22.04/ubuntu.iso
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- detail grid -->
+                        <div class="mt-6 grid grid-cols-2 gap-x-8 gap-y-4 text-[14px]">
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">任务状态</span>
+                                <span class="text-[#2563eb] font-medium">下载中</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">当前速度</span>
+                                <span>6.12 MB/s</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">文件大小</span>
+                                <span>4.68 GB</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">平均速度</span>
+                                <span>5.48 MB/s</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">已下载</span>
+                                <span>3.38 GB</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">剩余时间</span>
+                                <span>00:01:15</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">线程数</span>
+                                <span>16/16</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-[#777]">连接数</span>
+                                <span>16</span>
+                            </div>
+
+                        </div>
+
+                        <!-- progress -->
+                        <div class="mt-5">
+
+                            <div class="w-full h-[8px] rounded-full bg-[#edf1f7] overflow-hidden">
+                                <div class="w-[72%] h-full rounded-full bg-[#2563eb]"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- btns -->
+                        <div class="mt-6 flex gap-3">
+
+                            <button class="h-10 px-5 rounded-xl border border-[#dfe3ea] bg-white text-[14px]">
+                                高级设置
+                            </button>
+
+                            <button class="h-10 px-5 rounded-xl border border-[#dfe3ea] bg-white text-[14px]">
+                                重新检查
+                            </button>
+
+                            <button class="h-10 px-5 rounded-xl border border-[#dfe3ea] bg-white text-[14px]">
+                                暂停
+                            </button>
+
+                            <button class="h-10 px-5 rounded-xl border border-[#ffd4d4] bg-[#fff7f7] text-[#ef4444] text-[14px]">
+                                删除任务
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- thread -->
+                <div class="bg-white rounded-2xl border border-[#e8ebf2] overflow-hidden flex flex-col panel-shadow">
+
+                    <div class="h-11 border-b border-[#edf1f7] px-5 flex items-end">
+                        <div class="tab-active h-11 flex items-center text-[14px]">
+                            线程信息
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-auto p-4 space-y-2">
+
+                        <!-- thread item -->
+                        <div class="grid grid-cols-[50px_70px_1fr_90px] items-center gap-3 text-[13px]">
+
+                            <div>1</div>
+
+                            <div class="text-[#22c55e]">
+                                下载中
+                            </div>
+
+                            <div class="h-[8px] rounded-full bg-[#edf1f7] overflow-hidden">
+                                <div class="h-full w-[72%] bg-[#2563eb] rounded-full"></div>
+                            </div>
+
+                            <div>512 KB/s</div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- right -->
+                <div class="bg-white rounded-2xl border border-[#e8ebf2] overflow-hidden panel-shadow p-4 flex flex-col gap-4">
+
+                    <!-- title -->
+                    <div class="text-[15px] font-semibold text-[#1f2937]">
+                        全局统计
+                    </div>
+
+                    <!-- stats -->
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <div class="border border-[#edf1f7] rounded-xl p-4">
+
+                            <div class="text-[13px] text-[#888] mb-2">
+                                下载速度
+                            </div>
+
+                            <div class="text-[22px] font-bold">
+                                19.86 MB/s
+                            </div>
+
+                        </div>
+
+                        <div class="border border-[#edf1f7] rounded-xl p-4">
+
+                            <div class="text-[13px] text-[#888] mb-2">
+                                上传速度
+                            </div>
+
+                            <div class="text-[22px] font-bold">
+                                0 B/s
+                            </div>
+
+                        </div>
+
+                        <div class="border border-[#edf1f7] rounded-xl p-4">
+
+                            <div class="text-[13px] text-[#888] mb-2">
+                                并发任务
+                            </div>
+
+                            <div class="text-[22px] font-bold">
+                                4 / 10
+                            </div>
+
+                        </div>
+
+                        <div class="border border-[#edf1f7] rounded-xl p-4">
+
+                            <div class="text-[13px] text-[#888] mb-2">
+                                线程数
+                            </div>
+
+                            <div class="text-[22px] font-bold">
+                                92 / 200
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- chart -->
+                    <div class="border border-[#edf1f7] rounded-xl p-4">
+
+                        <div class="flex items-center mb-4">
+
+                            <div class="text-[15px] font-semibold text-[#1f2937]">
+                                速度图表
+                            </div>
+
+                            <div class="text-[12px] text-[#888] ml-2">
+                                (MB/s)
+                            </div>
+
+                        </div>
+
+                        <svg viewBox="0 0 400 180" class="w-full h-[170px]">
+
+                            <!-- grid -->
+                            <g class="chart-grid">
+
+                                <line x1="0" y1="20" x2="400" y2="20"/>
+                                <line x1="0" y1="60" x2="400" y2="60"/>
+                                <line x1="0" y1="100" x2="400" y2="100"/>
+                                <line x1="0" y1="140" x2="400" y2="140"/>
+
+                            </g>
+
+                            <!-- blue -->
+                            <polyline
+                                class="chart-line-blue"
+                                points="
+                                0,90
+                                20,88
+                                40,78
+                                60,80
+                                80,76
+                                100,82
+                                120,78
+                                140,92
+                                160,88
+                                180,70
+                                200,72
+                                220,88
+                                240,86
+                                260,78
+                                280,84
+                                300,80
+                                "
+                            />
+
+                            <!-- green -->
+                            <polyline
+                                class="chart-line-green"
+                                points="
+                                300,140
+                                320,140
+                                340,138
+                                360,92
+                                380,88
+                                400,92
+                                "
+                            />
+
+                        </svg>
+
+                    </div>
+
+                    <!-- disk -->
+                    <div class="border border-[#edf1f7] rounded-xl p-4">
+
+                        <div class="text-[15px] font-semibold text-[#1f2937] mb-4">
+                            磁盘空间
+                        </div>
+
+                        <div class="text-[14px] text-[#555] mb-3">
+                            本地磁盘 (D:)
+                        </div>
+
+                        <div class="h-[14px] rounded-full bg-[#edf1f7] overflow-hidden">
+
+                            <div class="w-[72%] h-full bg-[#2563eb] rounded-full"></div>
+
+                        </div>
+
+                        <div class="mt-3 text-[13px] text-[#888]">
+                            可用 128 GB / 共 500 GB
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="h-12 border-t border-[#e8ebf2] bg-white flex items-center justify-between px-5 text-[14px] text-[#555]">
+
+        <div class="flex items-center">
+
+            <i class="iconfont icon-sh闪电 text-[#f5b400] mr-2"></i>
+
+            就绪
+
+        </div>
+
+        <div class="flex items-center gap-10">
+
+            <div class="flex items-center">
+                <i class="iconfont icon-xiazai text-[#2563eb] mr-2"></i>
+                下载速度：19.86 MB/s
+            </div>
+
+            <div class="flex items-center">
+                <i class="iconfont icon-shangchuan text-[#22c55e] mr-2"></i>
+                上传速度：0 B/s
+            </div>
+
+            <div class="flex items-center">
+                <i class="iconfont icon-lianjie mr-2"></i>
+                并发任务：4
+            </div>
+
+            <div class="flex items-center">
+                <i class="iconfont icon-shezhi mr-2"></i>
+                总线程数：92
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================= 新建下载弹窗 ========================= -->
+
+<div
+    id="downloadModal"
+    class="modal-mask fixed inset-0 bg-[rgba(0,0,0,.35)] hidden items-center justify-center z-50"
+>
+
+    <div class="w-[720px] bg-white rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,.18)]">
+
+        <!-- header -->
+        <div class="h-[56px] border-b border-[#edf1f7] flex items-center justify-between px-6">
+
+            <div class="text-[18px] font-bold text-[#1f2937]">
+                新建下载
+            </div>
+
+            <button
+                onclick="closeModal('downloadModal')"
+                class="w-8 h-8 rounded-lg hover:bg-[#f4f6fb] flex items-center justify-center text-[#666]"
+            >
+                <i class="iconfont icon-guanbi"></i>
+            </button>
+
+        </div>
+
+        <!-- body -->
+        <div class="px-6 pt-5 pb-0">
+
+            <!-- tabs -->
+            <div class="h-10 flex items-start gap-10 mb-6">
+
+                <div class="download-tab-active h-10 flex items-center text-[15px] cursor-pointer">
+                    URL 下载
+                </div>
+
+                <div class="h-10 flex items-center text-[15px] text-[#666] cursor-pointer">
+                    BT 种子
+                </div>
+
+                <div class="h-10 flex items-center text-[15px] text-[#666] cursor-pointer">
+                    磁力链接
+                </div>
+
+            </div>
+
+            <!-- 下载链接 -->
+            <div class="mb-4">
+
+                <div class="flex items-center justify-between mb-2">
+
+                    <div class="text-[14px] font-medium text-[#444]">
+                        下载链接
+                    </div>
+
+                    <div class="flex items-center gap-3 text-[13px] text-[#666]">
+
+                        <div class="flex items-center cursor-pointer">
+                            <i class="iconfont icon-fuzhi mr-1"></i>
+                            粘贴并识别
+                        </div>
+
+                        <i class="iconfont icon-shuaxin cursor-pointer"></i>
+
+                    </div>
+
+                </div>
+
+                <textarea
+                    class="w-full h-[92px] rounded-xl border border-[#dfe3ea] px-4 py-3 text-[14px] resize-none"
+                    placeholder="请输入下载链接（支持 http/https/ftp/magnet）"
+                ></textarea>
+
+            </div>
+
+            <!-- 保存路径 -->
+            <div class="mb-4">
+
+                <div class="flex items-center justify-between mb-2">
+
+                    <div class="text-[14px] font-medium text-[#444]">
+                        保存路径
+                    </div>
+
+                    <div class="text-[13px] text-[#8b93a3]">
+                        剩余空间：128 GB
+                    </div>
+
+                </div>
+
+                <div class="flex gap-3">
+
+                    <input
+                        class="flex-1 h-[42px] rounded-xl border border-[#dfe3ea] px-4 text-[14px]"
+                        value="D:\Downloads"
+                    />
+
+                    <button class="w-[70px] rounded-xl border border-[#dfe3ea] bg-white text-[14px] hover:bg-[#f7f9fc]">
+                        浏览
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- 文件名 -->
+            <div class="mb-4">
+
+                <div class="text-[14px] font-medium text-[#444] mb-2">
+                    文件名（可选）
+                </div>
+
+                <input
+                    class="w-full h-[42px] rounded-xl border border-[#dfe3ea] px-4 text-[14px]"
+                    placeholder="留空则使用服务器文件名"
+                />
+
+            </div>
+
+            <!-- 两列 -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+
+                <!-- queue -->
+                <div>
+
+                    <div class="text-[14px] font-medium text-[#444] mb-2">
+                        所属队列
+                    </div>
+
+                    <div class="h-[42px] rounded-xl border border-[#dfe3ea] px-4 flex items-center justify-between text-[14px] cursor-pointer">
+
+                        <span>默认队列</span>
+
+                        <i class="iconfont icon-xiala text-[12px]"></i>
+
+                    </div>
+
+                </div>
+
+                <!-- tag -->
+                <div>
+
+                    <div class="text-[14px] font-medium text-[#444] mb-2">
+                        标签（可选）
+                    </div>
+
+                    <input
+                        class="w-full h-[42px] rounded-xl border border-[#dfe3ea] px-4 text-[14px]"
+                        placeholder="例如：学习、电影"
+                    />
+
+                </div>
+
+            </div>
+
+            <!-- 高级 -->
+            <div class="h-[38px] rounded-xl bg-[#f6f7fb] px-4 flex items-center justify-between text-[14px] font-semibold text-[#444] mb-4 cursor-pointer">
+
+                <div>
+                    高级选项
+                </div>
+
+                <i class="iconfont icon-xiala text-[12px]"></i>
+
+            </div>
+
+            <!-- 高级内容 -->
+            <div class="grid grid-cols-2 gap-4 pb-5">
+
+                <!-- left -->
+                <div class="border border-[#e8ebf2] rounded-2xl p-4">
+
+                    <div class="text-[14px] font-semibold text-[#444] mb-5">
+                        线程设置
+                    </div>
+
+                    <div class="flex items-center gap-5">
+
+                        <div class="text-[14px] text-[#555]">
+                            线程数
+                        </div>
+
+                        <div class="w-[140px] h-[36px] border border-[#dfe3ea] rounded-xl overflow-hidden flex items-center">
+
+                            <button class="w-10 h-full bg-[#fafbfd] hover:bg-[#f1f4f8] text-[#555]">
+                                -
+                            </button>
+
+                            <div class="flex-1 flex items-center justify-center text-[14px]">
+                                16
+                            </div>
+
+                            <button class="w-10 h-full bg-[#fafbfd] hover:bg-[#f1f4f8] text-[#555]">
+                                +
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-3 text-[13px] text-[#8b93a3]">
+                        建议：1-32
+                    </div>
+
+                </div>
+
+                <!-- right -->
+                <div class="border border-[#e8ebf2] rounded-2xl p-4">
+
+                    <div class="text-[14px] font-semibold text-[#444] mb-5">
+                        下载设置
+                    </div>
+
+                    <div class="space-y-4 text-[14px] text-[#444]">
+
+                        <label class="flex items-center cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                checked
+                                class="w-4 h-4 accent-[#2563eb] mr-3"
+                            />
+
+                            启用断点续传
+
+                        </label>
+
+                        <label class="flex items-center cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                checked
+                                class="w-4 h-4 accent-[#2563eb] mr-3"
+                            />
+
+                            下载完成后自动开始
+
+                        </label>
+
+                        <label class="flex items-center cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                class="w-4 h-4 accent-[#2563eb] mr-3"
+                            />
+
+                            验证文件完整性（下载完成后校验）
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- footer -->
+        <div class="h-[74px] border-t border-[#edf1f7] px-6 flex items-center justify-between">
+
+            <button
+                onclick="closeModal('downloadModal')"
+                class="h-10 px-6 rounded-xl border border-[#dfe3ea] bg-white text-[14px] hover:bg-[#f7f9fc]"
+            >
+                取消
+            </button>
+
+            <button class="h-10 px-6 rounded-xl bg-[#2563eb] hover:bg-[#1d56d7] text-white text-[14px] flex items-center">
+
+                <i class="iconfont icon-jia mr-2"></i>
+
+                立即下载
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================= 设置弹窗 ========================= -->
+
+<div
+    id="settingsModal"
+    class="modal-mask fixed inset-0 bg-[rgba(0,0,0,.35)] hidden items-center justify-center z-50"
+>
+
+    <div class="w-[600px] bg-white rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,.18)]">
+
+        <div class="h-[56px] border-b border-[#edf1f7] flex items-center justify-between px-6">
+
+            <div class="text-[18px] font-bold">
+                下载设置
+            </div>
+
+            <button
+                onclick="closeModal('settingsModal')"
+                class="w-8 h-8 rounded-lg hover:bg-[#f4f6fb] flex items-center justify-center text-[#666]"
+            >
+                <i class="iconfont icon-guanbi"></i>
+            </button>
+
+        </div>
+
+        <div class="p-6 space-y-5">
+
+            <div>
+
+                <div class="text-[14px] font-medium mb-2">
+                    默认下载路径
+                </div>
+
+                <input
+                    class="w-full h-[44px] rounded-xl border border-[#dfe3ea] px-4"
+                    value="D:\Downloads"
+                />
+
+            </div>
+
+            <div>
+
+                <div class="text-[14px] font-medium mb-2">
+                    最大并发任务
+                </div>
+
+                <input
+                    class="w-full h-[44px] rounded-xl border border-[#dfe3ea] px-4"
+                    value="10"
+                />
+
+            </div>
+
+            <div>
+
+                <div class="text-[14px] font-medium mb-2">
+                    默认线程数
+                </div>
+
+                <input
+                    class="w-full h-[44px] rounded-xl border border-[#dfe3ea] px-4"
+                    value="16"
+                />
+
+            </div>
+
+            <div>
+
+                <div class="text-[14px] font-medium mb-2">
+                    最大速度限制
+                </div>
+
+                <input
+                    class="w-full h-[44px] rounded-xl border border-[#dfe3ea] px-4"
+                    value="不限速"
+                />
+
+            </div>
+
+        </div>
+
+        <div class="h-[72px] border-t border-[#edf1f7] px-6 flex items-center justify-end gap-3">
+
+            <button
+                onclick="closeModal('settingsModal')"
+                class="h-10 px-6 rounded-xl border border-[#dfe3ea] bg-white text-[14px]"
+            >
+                取消
+            </button>
+
+            <button class="h-10 px-6 rounded-xl bg-[#2563eb] text-white text-[14px]">
+                保存设置
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ========================= Modal ========================= */
+
+const downloadModal =
+document.getElementById("downloadModal");
+
+const settingsModal =
+document.getElementById("settingsModal");
+
+/* open */
+
+document.getElementById("openDownloadModal")
+.onclick = () => {
+
+    downloadModal.classList.remove("hidden");
+    downloadModal.classList.add("flex");
+
+};
+
+document.getElementById("openSettings")
+.onclick = () => {
+
+    settingsModal.classList.remove("hidden");
+    settingsModal.classList.add("flex");
+
+};
+
+document.getElementById("openSettings2")
+.onclick = () => {
+
+    settingsModal.classList.remove("hidden");
+    settingsModal.classList.add("flex");
+
+};
+
+/* close */
+
+function closeModal(id){
+
+    const modal =
+    document.getElementById(id);
+
+    modal.classList.remove("flex");
+    modal.classList.add("hidden");
+
+}
+
+/* mask close */
+
+window.addEventListener("click",(e)=>{
+
+    if(e.target.classList.contains("modal-mask")){
+
+        e.target.classList.remove("flex");
+        e.target.classList.add("hidden");
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

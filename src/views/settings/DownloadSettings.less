@@ -1,0 +1,40 @@
+// ============================================================
+// 下载设置和速度设置共享样式
+// ============================================================
+
+.settings-section {
+  &__title {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light);
+  }
+}
+
+.settings-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: 6px 0;
+
+  &__label {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  &__hint {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cat-video",
+    "name": "视频/音频",
+    "icon": "film",
+    "defaultPath": "D:/Downloads/Videos/",
+    "postAction": "none",
+    "fileExtensions": [".mp4", ".avi", ".mkv", ".mov", ".mp3", ".flac", ".wav"],
+    "labels": ["影视", "音乐"]
+  },
+  {
+    "id": "cat-archive",
+    "name": "压缩文件",
+    "icon": "archive",
+    "defaultPath": "D:/Downloads/Archives/",
+    "postAction": "extract",
+    "fileExtensions": [".zip", ".rar", ".7z", ".tar", ".gz", ".xz"],
+    "labels": ["归档"]
+  },
+  {
+    "id": "cat-software",
+    "name": "软件安装包",
+    "icon": "package",
+    "defaultPath": "D:/Downloads/Software/",
+    "postAction": "openFile",
+    "fileExtensions": [".exe", ".msi", ".dmg", ".deb", ".rpm", ".apk"],
+    "labels": ["工具", "安装"]
+  },
+  {
+    "id": "cat-iso",
+    "name": "系统镜像",
+    "icon": "disc",
+    "defaultPath": "D:/Downloads/System/",
+    "postAction": "none",
+    "fileExtensions": [".iso", ".img", ".vhd", ".vhdx"],
+    "labels": ["操作系统"]
+  },
+  {
+    "id": "cat-doc",
+    "name": "文档",
+    "icon": "file-text",
+    "defaultPath": "D:/Downloads/Documents/",
+    "postAction": "openFile",
+    "fileExtensions": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".epub", ".mobi"],
+    "labels": ["学习", "阅读"]
+  },
+  {
+    "id": "cat-other",
+    "name": "其他",
+    "icon": "folder",
+    "defaultPath": "D:/Downloads/",
+    "postAction": "none",
+    "fileExtensions": [],
+    "labels": ["未分类"]
+  }
+]
